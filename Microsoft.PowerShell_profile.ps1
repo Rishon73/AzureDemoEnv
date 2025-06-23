@@ -28,17 +28,17 @@ function Tri-Start-OSVEnvironment() {
 	# Get all environments
 	$GetEnvironmentsURL = "http://localhost:18080/api/v1/environments"
 	$response = Invoke-RestMethod -Method Get -Uri $GetEnvironmentsURL
-	echo "Response from get all envs: $response"
+	Write-Host "Response from get all envs: $response"
 
 	# Find the 'OSV' environment
 	$envs = $response.value.data
 	$env = $envs | Where-Object { $_.name -eq "OSV" }
-	echo "Found env.: $env"
+	Write-Host "Found env.: $env"
 
 	# Start the selected environment
 	$StartEnvURL = "http://localhost:18080/api/v1/environments/"+$env.id+"/start"
 	$response = Invoke-RestMethod -Method Post -Uri $StartEnvURL
-	echo "Response from Start Env.: $response":
+	Write-Host "Response from Start Env.: $response":
 }
 
 function Tri-launch-TriServeWebMonitor() {
@@ -50,7 +50,7 @@ function Tri-launch-TriServeWebMonitor() {
 		# for 2023.1
 		$devopsPackagePath = "C:\DevOpsPackage\TriServeWebMonitor"
 	}
-	echo "DevOps Package path is: $devopsPackagePath"
+	Write-Host "DevOps Package path is: $devopsPackagePath"
 	start-process -FilePath "$devopsPackagePath\launchTriserv.bat" -WorkingDirectory $devopsPackagePath
 }
 
@@ -118,27 +118,27 @@ function Tri-env-start() {
 }
 
 function get-lock-file-name() {
-	$userProvile = $env:USERPROFILE
+	$userProfile = $env:USERPROFILE
 	$lockFile = ""
 
 	switch -Wildcard ( hostname ) 	{
 		'satosca242*' {
 			Write-Host 'satosca242'
-			$lockFile = "$userProvile\Tosca_Projects\Workspaces\tosca_24_2_core_repository\tosca_24_2_core_repository.tws.txt"
+			$lockFile = "$userProfile\Tosca_Projects\Workspaces\tosca_24_2_core_repository\tosca_24_2_core_repository.tws.txt"
 		}
 		'satosca241*' {
 			Write-Host 'satosca241'
-			$lockFile = "$userProvile\Tosca_Projects\Workspaces\tosca_24_1_core_repository\tosca_24_1_core_repository.tws.txt"
+			$lockFile = "$userProfile\Tosca_Projects\Workspaces\tosca_24_1_core_repository\tosca_24_1_core_repository.tws.txt"
 
 		}
 		'satosca232*' {
 			Write-Host 'satosca232'
-			$lockFile = "$userProvile\Tosca_Projects\Tosca2023.2\tosca_core_repository_v2023-2\tosca_core_repository_v2023-2.tws.txt"
+			$lockFile = "$userProfile\Tosca_Projects\Tosca2023.2\tosca_core_repository_v2023-2\tosca_core_repository_v2023-2.tws.txt"
 
 		}
 		'satosca231*' {
 			Write-Host 'satosca231'
-			$lockFile = "$userProvile\Tosca_Projects\Tosca2023.1\tosca_core_repository_v2023-1\tosca_core_repository_v2023-1.tws.txt"
+			$lockFile = "$userProfile\Tosca_Projects\Tosca2023.1\tosca_core_repository_v2023-1\tosca_core_repository_v2023-1.tws.txt"
 		}
 		default {
 			Write-Information 'something else'
@@ -158,15 +158,20 @@ function Tri-launch-E2G-agent()
 	if (-Not $personalAgent) { $commandString += " --shared"}
 	if ($liveView) { $commandString += " --liveview"}
 
-		echo $commandString
+		Write-Host $commandString
 		Invoke-Expression $commandString
 }
 
 function Tri-launch-sim-agent()
 {
-	Write-Host "...assuming the file is in the Download folder..."
-	$userProvile = $env:USERPROFILE
-	$filePath = "$userProvile\Downloads\Tricentis.Simulator.Agent.exe"
+	$agentFile = "Tricentis.Simulator.Agent.exe"
+	$userProfile = $env:USERPROFILE
+	Write-Host "...assuming the file is in the $userProfile\Download folder..."
 
-	start-process -FilePath $filePath
+	$filePath = "$userProfile\Downloads\$agentFile"
+	if (Test-Path -Path $filePath -PathType Leaf) {
+    	start-process -FilePath $filePath
+	} else {
+		Write-Host "The file '$filePath' does not exist."
+	}
 }
