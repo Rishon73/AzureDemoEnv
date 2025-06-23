@@ -2,7 +2,7 @@ function Tri-show()
 {
 Write-Host "Script directory: $PSScriptRoot
 
-	Helping functions to make our lives slightly easier (v2024.2.a 04/16/2025)
+	Helping functions to make our lives slightly easier (v2024.2.b 06/23/2025)
 -----------------------------------------------------------------------------------
 Tri-launch-LocalDEXAgent
 Tri-Start-OSVEnvironment
@@ -13,6 +13,7 @@ Tri-launch-Tosca-license-configuration
 Tri-launch-vision-ai-agent
 Tri-launch-di-report-viewer
 Tri-launch-E2G-agent [-personalAgent] [-liveView]
+Tri-launch-sim-agent
 "
 }
 
@@ -159,4 +160,13 @@ function Tri-launch-E2G-agent()
 
 		echo $commandString
 		Invoke-Expression $commandString
+}
+
+function Tri-launch-sim-agent()
+{
+	Write-Host "...assuming the file is in the Download folder..."
+	$userProvile = $env:USERPROFILE
+	$filePath = "$userProvile\Downloads\Tricentis.Simulator.Agent.exe"
+
+	start-process -FilePath filePath
 }
