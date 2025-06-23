@@ -168,5 +168,5 @@ function Tri-launch-sim-agent()
 	$userProvile = $env:USERPROFILE
 	$filePath = "$userProvile\Downloads\Tricentis.Simulator.Agent.exe"
 
-	start-process -FilePath filePath
+	start-process -FilePath $filePath
 }
